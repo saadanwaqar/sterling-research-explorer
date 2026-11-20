@@ -1,0 +1,163 @@
+<div class="app-wrapper">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Sterling Research Explorer</span>
+          <span class="brand-tagline">Powered by CORE Open Access</span>
+        </div>
+      </div>
+      <a href="https://core.ac.uk/" target="_blank" rel="noopener noreferrer" class="core-badge">
+        CORE API
+      </a>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="app-main">
+    <div class="container">
+
+      <!-- Search bar -->
+      <section class="search-section">
+        <app-search-bar [loading]="loading()" (search)="onSearch($event)" />
+      </section>
+
+      <!-- Results area -->
+      @if (currentQuery()) {
+        <!-- Stats bar -->
+        @if (!loading() && !error()) {
+          <div class="stats-bar">
+            <div class="stats-left">
+              <span class="stats-count">
+                <strong>{{ totalHits() | number }}</strong> total results
+              </span>
+              <span class="stats-divider">·</span>
+              <span class="stats-query">
+                Showing <strong>{{ papers().length }}</strong> for
+                <code class="query-code">"{{ currentQuery() }}"</code>
+              </span>
+            </div>
+          </div>
+        }
+
+        <!-- Loading state -->
+        @if (loading()) {
+          <div class="stats-bar loading-stats">
+            <div class="skeleton-text" style="width: 180px; height: 16px;"></div>
+          </div>
+          <div class="papers-grid">
+            @for (item of [1, 2, 3]; track item) {
+              <div class="skeleton-card">
+                <div class="skeleton-line" style="width: 60%; height: 14px; margin-bottom: 10px;"></div>
+                <div class="skeleton-line" style="width: 100%; height: 20px; margin-bottom: 6px;"></div>
+                <div class="skeleton-line" style="width: 90%; height: 20px; margin-bottom: 16px;"></div>
+                <div class="skeleton-line" style="width: 55%; height: 12px; margin-bottom: 8px;"></div>
+                <div class="skeleton-line" style="width: 45%; height: 12px; margin-bottom: 20px;"></div>
+                <div class="skeleton-line" style="width: 100%; height: 12px; margin-bottom: 6px;"></div>
+                <div class="skeleton-line" style="width: 100%; height: 12px; margin-bottom: 6px;"></div>
+                <div class="skeleton-line" style="width: 75%; height: 12px;"></div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Error state -->
+        @if (error() && !loading()) {
+          <div class="error-state">
+            <div class="error-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <h3 class="error-title">Search Failed</h3>
+            <p class="error-message">{{ error() }}</p>
+            <div class="error-hint">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Make sure you have a valid CORE API key set in <code>environment.ts</code>.
+              Get a free key at <a href="https://core.ac.uk/services/api" target="_blank" rel="noopener">core.ac.uk/services/api</a>
+            </div>
+          </div>
+        }
+
+        <!-- Empty state (search done but no results) -->
+        @if (!loading() && !error() && papers().length === 0 && currentQuery()) {
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h3 class="empty-title">No Results Found</h3>
+            <p class="empty-message">
+              No papers matched <code>"{{ currentQuery() }}"</code>. Try different keywords or broaden your query.
+            </p>
+          </div>
+        }
+
+        <!-- Results: chart + grid -->
+        @if (!loading() && !error() && papers().length > 0) {
+          <section class="chart-section">
+            <app-papers-chart [papers]="papers()" />
+          </section>
+
+          <section class="results-section">
+            <div class="papers-grid">
+              @for (paper of papers(); track paper.id) {
+                <app-paper-card [paper]="paper" />
+              }
+            </div>
+          </section>
+        }
+      }
+
+      <!-- Initial state (no query yet) -->
+      @if (!currentQuery() && !loading()) {
+        <div class="welcome-state">
+          <div class="welcome-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+          </div>
+          <h2 class="welcome-title">Search Open Access Research</h2>
+          <p class="welcome-desc">
+            Explore millions of peer-reviewed papers from CORE — the world's largest aggregator of open access research.
+          </p>
+          <div class="example-queries">
+            <span class="examples-label">Try these queries:</span>
+            <div class="examples-list">
+              <span class="example-chip">machine learning AND healthcare</span>
+              <span class="example-chip">drone AND (delivery OR logistics)</span>
+              <span class="example-chip">climate change AND renewable energy</span>
+              <span class="example-chip">deep learning AND computer vision</span>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container">
+      <span>Powered by <a href="https://core.ac.uk/" target="_blank" rel="noopener">CORE Open Access</a></span>
+      <span class="footer-divider">·</span>
+      <span>Sterling Research Explorer</span>
+    </div>
+  </footer>
+</div>
