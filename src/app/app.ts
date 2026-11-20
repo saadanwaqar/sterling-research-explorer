@@ -35,9 +35,9 @@ export class App {
         this.totalHits.set(response.totalHits ?? 0);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Search error:', err);
-        this.error.set('An unexpected error occurred. Please try again.');
+      error: (err: string) => {
+        this.error.set(err);
+        this.papers.set([]);
         this.loading.set(false);
       }
     });
