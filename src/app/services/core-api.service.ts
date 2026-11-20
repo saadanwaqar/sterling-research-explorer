@@ -12,7 +12,8 @@ export class CoreApiService {
   private http = inject(HttpClient);
 
   searchPapers(query: string, limit: number): Observable<SearchResponse> {
-    const url = `${environment.coreApiUrl}/search/works?q=${encodeURIComponent(query)}&limit=${limit}&apiKey=${environment.coreApiKey}`;
+    const apiKeyParam = environment.coreApiKey ? `&apiKey=${environment.coreApiKey}` : '';
+    const url = `${environment.coreApiUrl}/search/works/?q=${encodeURIComponent(query)}&limit=${limit}${apiKeyParam}`;
     return this.http.get<SearchResponse>(url).pipe(
       catchError((error) => {
         console.error('CORE API error:', error);
