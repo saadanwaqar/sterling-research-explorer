@@ -14,9 +14,20 @@
           <span class="brand-tagline">Powered by CORE Open Access</span>
         </div>
       </div>
-      <a href="https://core.ac.uk/" target="_blank" rel="noopener noreferrer" class="core-badge">
-        CORE API
-      </a>
+      <div class="header-actions">
+        <button class="reading-list-btn" (click)="toggleReadingList()" [class.active]="showReadingList()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Reading List
+          @if (readingListCount() > 0) {
+            <span class="rl-badge">{{ readingListCount() }}</span>
+          }
+        </button>
+        <a href="https://core.ac.uk/" target="_blank" rel="noopener noreferrer" class="core-badge">
+          CORE API
+        </a>
+      </div>
     </div>
   </header>
 
@@ -118,7 +129,7 @@
           <section class="results-section">
             <div class="papers-grid">
               @for (paper of papers(); track paper.id) {
-                <app-paper-card [paper]="paper" />
+                <app-paper-card [paper]="paper" [highlightTerms]="highlightTerms()" />
               }
             </div>
           </section>
@@ -161,4 +172,14 @@
       <span>Sterling Research Explorer</span>
     </div>
   </footer>
+
+  <!-- Reading List overlay backdrop -->
+  @if (showReadingList()) {
+    <div class="rl-backdrop" (click)="toggleReadingList()"></div>
+  }
+
+  <!-- Reading List side drawer -->
+  <div class="rl-drawer" [class.open]="showReadingList()">
+    <app-reading-list-panel (close)="toggleReadingList()" />
+  </div>
 </div>
