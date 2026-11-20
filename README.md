@@ -14,7 +14,7 @@ Built as part of the SterlingCode senior software engineering assessment.
 - **Publication Year Chart** — Interactive Chart.js bar chart aggregating results by publication year — visualise research trends for any query
 - **Responsive Design** — Works cleanly on desktop and tablet
 - **Loading Skeletons** — Shimmer placeholder cards during API requests
-- **Error Handling** — Graceful error states with actionable messages (e.g. missing API key notice)
+- **Error Handling** — Graceful error states with actionable messages (rate limit, network errors)
 
 ---
 
@@ -43,32 +43,13 @@ Built as part of the SterlingCode senior software engineering assessment.
 npm install -g @angular/cli@latest
 ```
 
-### 1. Get a Free CORE API Key
-
-The app works without a key but is rate-limited. For best results:
-
-1. Register at [https://core.ac.uk/services/api](https://core.ac.uk/services/api)
-2. Copy your API key
-
-### 2. Configure the API Key
-
-Open `src/environments/environment.ts` and add your key:
-
-```ts
-export const environment = {
-  production: false,
-  coreApiUrl: 'https://api.core.ac.uk/v3',
-  coreApiKey: 'YOUR_API_KEY_HERE'   // ← paste your key here
-};
-```
-
-### 3. Install Dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Run the Dev Server
+### 2. Run the Dev Server
 
 ```bash
 ng serve
@@ -76,7 +57,7 @@ ng serve
 
 Navigate to `http://localhost:4200`. The app hot-reloads on file changes.
 
-### 5. Build for Production
+### 3. Build for Production
 
 ```bash
 ng build
